@@ -5,7 +5,7 @@ resource "google_compute_address" "static_ip_cinema" {
 }
 
 resource "google_compute_instance" "cinema" {
-  name = "cinema"
+  name = "cinema1"
   machine_type = "e2-standard-2"
   allow_stopping_for_update = "true"
 
@@ -16,9 +16,10 @@ resource "google_compute_instance" "cinema" {
   }
 
   metadata = {
-    ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
+    ssh-keys = "root:${file(var.gce_ssh_pub_key_file1)} \nroot:${file(var.gce_ssh_pub_key_file2)} \nroot:${file(var.gce_ssh_pub_key_file3)}"
+    # ssh-keys = join("\n", [for user, key in var.gce_ssh_pub_key_file : "${user}:${key}"])
   }
-
+  
   network_interface {
     network = "default"
     access_config {
@@ -26,16 +27,24 @@ resource "google_compute_instance" "cinema" {
     }
   }
 
-  metadata_startup_script="sudo -i; echo 'gce-user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers; apt-get update; apt install -y nginx python3-pip libgl1-mesa-glx libpq-dev; chmod -R 0777 /var/www/html; git clone https://github.com/cinemaproject/backend.git; cd backend/; pip3 install psycopg2-binary"
+  metadata_startup_script="${file("init.sh")}"
 
- provisioner "local-exec" {
-    command = "scp -r static/** ${var.gce_ssh_user}@${google_compute_instance.cinema.network_interface.0.access_config.0.nat_ip}:/var/www/html/"
+    provisioner "file" {
+    source      = "./static/"
+    destination = "/opt/"
   }
 
-  provisioner "file" {
-    source      = "static/**"
-    destination = "/var/www/html/"
+  connection {
+    host     = "${google_compute_instance.cinema.network_interface.0.access_config.0.nat_ip}"
+    type     = "ssh"
+    user     = "${var.gce_ssh_user}"
+    # password = "${var.admin_password}"
+    private_key = file("./id_rsa")
+    agent    = "false"
   }
+  # provisioner "local-exec" {
+  #     command = "sleep 50; scp -r ./static/** ${var.gce_ssh_user}@${google_compute_instance.cinema.network_interface.0.access_config.0.nat_ip}:/var/www/html/"
+  # }  
   
   tags = ["cinema"]
 }
