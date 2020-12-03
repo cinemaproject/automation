@@ -5,7 +5,7 @@ resource "google_compute_address" "static_ip_cinema" {
 }
 
 resource "google_compute_instance" "cinema" {
-  name = "cinema1"
+  name = "cinema"
   machine_type = "e2-standard-2"
   allow_stopping_for_update = "true"
 
