@@ -1,12 +1,22 @@
 version: "3.8"
 services:
-  app:
+  proxy:
     build:
       context: ./
-      dockerfile: Dockerfile
-    image: app
+      dockerfile: proxy.Dockerfile
+    image: proxy
     ports:
         - "0.0.0.0:80:80"
     # Debug 
-    # volumes:
-    #   - ./static/:/usr/share/nginx/html/
+    volumes:
+      - ./static/:/usr/share/nginx/html/
+  image-processing:
+    build:
+      context: ./
+      dockerfile: image-processing.Dockerfile
+    image: image-processing
+    ports:
+        - "0.0.0.0:80:80"
+    # Debug 
+    volumes:
+      - ./static/:/usr/share/nginx/html/
