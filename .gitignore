@@ -5,3 +5,4 @@ terraform.tfstate.backup
 ssh-*
 id_rsa
 terraform.tfvars
+node_modules

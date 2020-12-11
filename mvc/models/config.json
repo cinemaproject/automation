@@ -1,0 +1,18 @@
+{
+    "development": {
+      "username": "postgres",
+      "password": "testpwd",
+      "database": "postgres",
+      "port": 5432,
+      "host": "127.0.0.1",
+      "dialect": "postgresql",
+      "logging": false
+    },
+    "production": {
+      "username": "root",
+      "password": null,
+      "database": "database_production",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+    }
+  }
