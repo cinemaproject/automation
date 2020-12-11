@@ -1,4 +1,4 @@
-const db = require(`../models/index.js`);
+const db = require('../models/index.js');
 /**
  * Class Films Controller
  */
@@ -9,7 +9,15 @@ class FilmsController {
    * @param {*} res
    */
   liste(req, res) {
-    db.Films.findAll().then(films =>
+    db.films.findAndCountAll({
+      // where: {
+      //   title: {
+      //     [Op.like]: 'foo%'
+      //   }
+      // },
+      // offset: 10,
+      limit: 10
+    }).then(films =>
       res.render("films/index", { films })
     );
   }
